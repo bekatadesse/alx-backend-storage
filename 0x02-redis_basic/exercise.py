@@ -8,6 +8,20 @@ from typing import Union, Optional, Callable
 import uuid
 from functools import wraps
 
+def call_history(method: Callable) -> Callable:
+    """
+    count how many times methods
+    of the Cache class are called
+    """
+    key = method.__qualname__
+
+    @wraps(method)
+    def wrapper(self, *args, **kwargs):
+        """decorator wrapper"""
+        self._redis.incr(key)
+        return method(self, *args, **kwargs)
+    return wrapper
+
 def count_calls(method: Callable) -> Callable:
     """
     count how many times methods
